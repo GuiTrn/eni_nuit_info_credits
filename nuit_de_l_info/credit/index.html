@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Booster Océan</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <img src="img/logo.png" alt="ENI SQUAD - TCG Logo" class="logo">
+
+    <button class="btn-show-graph" id="btnShowGraph">Afficher le graphique</button>
+
+    <div class="modal" id="graphModal">
+        <div class="modal-content">
+            <canvas id="userGraph" width="400" height="400"></canvas>
+            <button class="close-modal" id="closeGraphModal">Fermer</button>
+        </div>
+    </div>
+
+    <div class="bubble-container">
+        <div class="bubble" style="left:10%; animation-duration:8s; animation-delay:1s;"></div>
+        <div class="bubble" style="left:20%; animation-duration:9s; animation-delay:2s; width:25px; height:25px;"></div>
+        <div class="bubble" style="left:30%; animation-duration:7s; animation-delay:3s;"></div>
+        <div class="bubble" style="left:40%; animation-duration:10s; animation-delay:0.5s; width:15px; height:15px;"></div>
+        <div class="bubble" style="left:50%; animation-duration:8s; animation-delay:1.5s;"></div>
+        <div class="bubble" style="left:60%; animation-duration:6s; animation-delay:2.5s; width:30px; height:30px;"></div>
+        <div class="bubble" style="left:70%; animation-duration:11s; animation-delay:4s;"></div>
+        <div class="bubble" style="left:80%; animation-duration:9s; animation-delay:3s; width:20px; height:20px;"></div>
+        <div class="bubble" style="left:90%; animation-duration:8s; animation-delay:2s;"></div>
+    </div>
+
+    <div class="deck" id="deck"></div>
+
+    <div class="main-content">
+        <div class="scene" id="scene">
+            <div class="booster" id="booster"></div>
+            <div class="tear-line" id="tearLine">
+                <div class="tear-progress" id="tearProgress"></div>
+            </div>
+            <div class="card" id="card">
+                <div class="card-content" id="cardContent">
+                    <img id="avatar" class="avatar" src="" alt="Avatar">
+                    <h3 id="username"></h3>
+                    <p id="info"></p>
+                    <a id="profileLink" href="#" target="_blank">Voir le profil</a>
+                </div>
+            </div>
+        </div>
+        <div class="booster-summary" id="boosterSummary"></div>
+        <button class="btn-open" id="btnOpen">
+            Ouvrir le booster
+            <span class="badge" id="openCounter">5</span>
+        </button>
+        <button class="btn-next" id="btnNext">Prochain booster</button>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modalNameDesc">
+                <h3 id="modalName"></h3>
+                <p id="modalDesc"></p>
+            </div>
+            <div class="modalCardWrapper">
+                <div class="modal-card" id="modalCard"></div>
+            </div>
+            <button class="close-modal" id="closeModal">Fermer</button>
+        </div>
+    </div>
+
+    <audio id="soundOcean" src="sound/ocean.mp3" loop></audio>
+    <audio id="soundChill" src="sound/chill.mp3" loop></audio>
+    <audio id="soundPaper" src="sound/paper.mp3"></audio>
+    <audio id="soundFlipping" src="sound/flipping.mp3"></audio>
+    <audio id="soundWin" src="sound/win.mp3"></audio>
+    <audio id="soundClick" src="sound/click.mp3"></audio>
+
+    <script src="scripts.js"></script>
+    <script src="graph.js"></script>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+        // Récupération des éléments
+        const btnShowGraph = document.getElementById('btnShowGraph');
+        const graphModal = document.getElementById('graphModal');
+        const closeGraphModal = document.getElementById('closeGraphModal');
+        const userGraphCanvas = document.getElementById('userGraph');
+    
+        // Données simulées des utilisateurs et participations
+        const userStats = [
+            { name: "YLAN Woelffle", participation: 3 },
+            { name: "Guillaume TOURNAN", participation: 1 },
+            { name: "Hugo CIRETTE", participation: 1 },
+            { name: "Ludovic PROUX", participation: 1 },
+            { name: "Arthur BOUCHAUD", participation: 1 }
+        ];
+    
+        let chartInstance;
+    
+        // Fonction pour afficher le graphique
+        function showGraph() {
+            if (chartInstance) {
+                chartInstance.destroy(); // Supprime l'ancien graphique si existant
+            }
+            chartInstance = new Chart(userGraphCanvas, {
+                type: 'bar',
+                data: {
+                    labels: userStats.map(user => user.name),
+                    datasets: [{
+                        label: 'Participations aux défis',
+                        data: userStats.map(user => user.participation),
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            graphModal.classList.add('show');
+        }
+    
+        // Affiche la modale avec le graphique
+        btnShowGraph.addEventListener('click', showGraph);
+    
+        // Ferme la modale
+        closeGraphModal.addEventListener('click', () => {
+            graphModal.classList.remove('show');
+        });
+    
+        // Fermer la modale en cliquant en dehors du contenu
+        graphModal.addEventListener('click', (e) => {
+            if (e.target === graphModal) {
+                graphModal.classList.remove('show');
+            }
+        });
+        </script>
+</html>

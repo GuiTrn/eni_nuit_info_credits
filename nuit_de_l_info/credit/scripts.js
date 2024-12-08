@@ -1,3 +1,6 @@
+// scripts.js
+
+// Données des anecdotes
 const anecdotes = [
     { type: 'anecdote', info: 'Chaque année, environ 8 millions de tonnes de plastique finissent dans les océans.', img: 'https://via.placeholder.com/150?text=Pollution+1' },
     { type: 'anecdote', info: 'Les microplastiques sont ingérés par de nombreuses espèces marines, perturbant les écosystèmes.', img: 'https://via.placeholder.com/150?text=Pollution+2' },
@@ -31,6 +34,7 @@ const anecdotes = [
     { type: 'anecdote', info: 'Les océans absorbent environ un quart du CO₂ produit par les activités humaines.', img: 'https://via.placeholder.com/150?text=Pollution+30' }
 ];
 
+// Liens GitHub des membres spéciaux
 const githubLinks = {
     'YLAN Woelffle': 'https://github.com/DubbelF34140',
     'Guillaume TOURNAN': 'https://github.com/GuiTrn',
@@ -39,132 +43,132 @@ const githubLinks = {
     'Arthur BOUCHAUD': 'https://github.com/bcharthur'
 };
 
+// Descriptions des membres spéciaux
 const userDescriptions = {
-    'YLAN Woelffle': 'Ylan à travaillé sur le projet Global ainsi que le Game Cha et Cookie Cauchemar.',
-    'Guillaume TOURNAN': 'Guillaume à travaillé sur le projet de la page des crédits.',
-    'Hugo CIRETTE': 'Hugo à travaillé sur le Jeu intégrant des IA.',
-    'Ludovic PROUX': 'Ludo à travaillé sur le projet Global.',
-    'Arthur BOUCHAUD': 'Arthur à travaillé sur le projet GreenIT.'
+    'YLAN Woelffle': 'Ylan a travaillé sur le projet Global ainsi que le Game Cha et Cookie Cauchemar.',
+    'Guillaume TOURNAN': 'Guillaume a travaillé sur le projet de la page des crédits.',
+    'Hugo CIRETTE': 'Hugo a travaillé sur le Jeu intégrant des IA.',
+    'Ludovic PROUX': 'Ludo a travaillé sur le projet Global.',
+    'Arthur BOUCHAUD': 'Arthur a travaillé sur le projet GreenIT.'
 };
 
+// Cartes spéciales disponibles
+const specialCards = [
+    { type: 'special', img: 'img/ylan.png', name: 'YLAN Woelffle' },
+    { type: 'special', img: 'img/guillaume.png', name: 'Guillaume TOURNAN' },
+    { type: 'special', img: 'img/hugo.png', name: 'Hugo CIRETTE' },
+    { type: 'special', img: 'img/ludo.png', name: 'Ludovic PROUX' },
+    { type: 'special', img: 'img/arthur.png', name: 'Arthur BOUCHAUD' }
+];
 
+const descriptions = [
+    "Passionné par la nature et l'environnement, toujours prêt à plonger dans l'océan.",
+    "A participé à de nombreuses missions de nettoyage des plages.",
+    "Aime sensibiliser le public aux enjeux de la pollution marine.",
+    "Expert en biologie marine, connait chaque créature sous-marine.",
+    "A parcouru les côtes du monde pour comprendre l'impact du plastique.",
+    "Soutient activement les ONG travaillant sur la préservation des océans.",
+    "A un talent caché : peut reconnaitre le chant de chaque mammifère marin.",
+    "Inspiré par Cousteau, il rêve d'un océan sans déchets.",
+    "A déjà nettoyé plus de 10 000 mégots de cigarettes sur les plages.",
+    "Transmet sa passion de l'océan aux plus jeunes."
+];
 
+let boosterCards = []; 
+let currentCardIndex = 0; 
+let lastBoosterCards = []; // Variable pour stocker les cartes du dernier booster
 
+// Sélection des éléments du DOM
+const booster = document.getElementById('booster');
+const btnOpen = document.getElementById('btnOpen');
+// const btnNext = document.getElementById('btnNext'); // Bouton "Prochain booster" non utilisé
+const tearLine = document.getElementById('tearLine');
+const tearProgress = document.getElementById('tearProgress');
+const card = document.getElementById('card');
+const cardContent = document.getElementById('cardContent');
+const deck = document.getElementById('deck');
+const modal = document.getElementById('modal');
+const modalCard = document.getElementById('modalCard');
+const closeModalBtn = document.getElementById('closeModal');
+const modalName = document.getElementById('modalName');
+const modalDesc = document.getElementById('modalDesc');
+const openCounter = document.getElementById('openCounter'); // Élément du badge
+const boosterSummary = document.getElementById('boosterSummary'); // Conteneur du récapitulatif
 
-        const specialCards = [
-            { type: 'special', img: 'img/ylan.png', name: 'YLAN Woelffle' },
-            { type: 'special', img: 'img/guillaume.png', name: 'Guillaume TOURNAN' },
-            { type: 'special', img: 'img/hugo.png', name: 'Hugo CIRETTE' },
-            { type: 'special', img: 'img/ludo.png', name: 'Ludovic PROUX' },
-            { type: 'special', img: 'img/arthur.png', name: 'Arthur BOUCHAUD' }
-        ];
+// Gestion des sons
+const soundOcean = document.getElementById('soundOcean');
+const soundChill = document.getElementById('soundChill');
+const soundPaper = document.getElementById('soundPaper');
+const soundFlipping = document.getElementById('soundFlipping'); // Son de flipping existant
+const soundWin = document.getElementById('soundWin'); // Nouveau son win
+const soundClick = document.getElementById('soundClick'); // Son de clic ajouté
 
-        const descriptions = [
-            "Passionné par la nature et l'environnement, toujours prêt à plonger dans l'océan.",
-            "A participé à de nombreuses missions de nettoyage des plages.",
-            "Aime sensibiliser le public aux enjeux de la pollution marine.",
-            "Expert en biologie marine, connait chaque créature sous-marine.",
-            "A parcouru les côtes du monde pour comprendre l'impact du plastique.",
-            "Soutient activement les ONG travaillant sur la préservation des océans.",
-            "A un talent caché : peut reconnaitre le chant de chaque mammifère marin.",
-            "Inspiré par Cousteau, il rêve d'un océan sans déchets.",
-            "A déjà nettoyé plus de 10 000 mégots de cigarettes sur les plages.",
-            "Transmet sa passion de l'océan aux plus jeunes."
-        ];
+// Variables d'état
+let isDragging = false;
+let isTearing = false;
+let startX = 0;
+let rotation = { x: 0, y: 0 };
 
-        let boosterCards = []; 
-        let currentCardIndex = 0; 
-        let lastBoosterCards = []; // Variable pour stocker les cartes du dernier booster
+let modalIsDragging = false;
+let modalStartX = 0;
+let modalRotation = { x: 0, y: 0 };
 
-        const booster = document.getElementById('booster');
-        const btnOpen = document.getElementById('btnOpen');
-        const btnNext = document.getElementById('btnNext');
-        const tearLine = document.getElementById('tearLine');
-        const tearProgress = document.getElementById('tearProgress');
-        const card = document.getElementById('card');
-        const cardContent = document.getElementById('cardContent');
-        const deck = document.getElementById('deck');
-        const modal = document.getElementById('modal');
-        const modalCard = document.getElementById('modalCard');
-        const closeModalBtn = document.getElementById('closeModal');
-        const modalName = document.getElementById('modalName');
-        const modalDesc = document.getElementById('modalDesc');
-        const openCounter = document.getElementById('openCounter'); // Élément du badge
-        const boosterSummary = document.getElementById('boosterSummary'); // Conteneur du récapitulatif
+const MAX_ROT_X = 10;
+const MAX_ROT_Y = 20;
+const collectedCards = [];
 
-        // Gestion des sons
-        const soundOcean = document.getElementById('soundOcean');
-        const soundChill = document.getElementById('soundChill');
-        const soundPaper = document.getElementById('soundPaper');
-        const soundFlipping = document.getElementById('soundFlipping'); // Son de flipping existant
-        const soundWin = document.getElementById('soundWin'); // Nouveau son win
-        const soundClick = document.getElementById('soundClick'); // Son de clic ajouté
+// Initialisation du compteur de tirages
+let remainingOpens = specialCards.length; // Aligné avec le nombre de cartes spéciales
+openCounter.textContent = remainingOpens;
 
-        let isDragging = false;
-        let isTearing = false;
-        let startX = 0;
-        let rotation = { x: 0, y: 0 };
+// Jouer les sons de fond au chargement de la page et les relancer dès qu'ils finissent
+window.addEventListener('DOMContentLoaded', () => {
+    soundOcean.loop = false; // Désactiver la boucle pour gérer manuellement
+    soundChill.loop = false; // Désactiver la boucle pour gérer manuellement
 
-        let modalIsDragging = false;
-        let modalStartX = 0;
-        let modalRotation = { x: 0, y: 0 };
+    // Fonction pour jouer et relancer le son Ocean
+    const playOcean = () => {
+        soundOcean.currentTime = 0;
+        soundOcean.play().catch(e => console.log('Autoplay prevented for oceanSound'));
+    };
 
-        const MAX_ROT_X = 10;
-        const MAX_ROT_Y = 20;
-        const collectedCards = [];
+    // Fonction pour jouer et relancer le son Chill
+    const playChill = () => {
+        soundChill.currentTime = 0;
+        soundChill.play().catch(e => console.log('Autoplay prevented for chillSound'));
+    };
 
-        // Initialisation du compteur de tirages
-        let remainingOpens = specialCards.length; // Aligné avec le nombre de cartes spéciales
-        openCounter.textContent = remainingOpens;
+    // Événements pour relancer les sons lorsqu'ils se terminent
+    soundOcean.addEventListener('ended', playOcean);
+    soundChill.addEventListener('ended', playChill);
 
-        // Jouer les sons de fond au chargement de la page et les relancer dès qu'ils finissent
-        window.addEventListener('DOMContentLoaded', () => {
-            soundOcean.loop = false; // Désactiver la boucle pour gérer manuellement
-            soundChill.loop = false; // Désactiver la boucle pour gérer manuellement
+    // Démarrer la lecture initiale
+    playOcean();
+    playChill();
+});
 
-            // Fonction pour jouer et relancer le son Ocean
-            const playOcean = () => {
-                soundOcean.currentTime = 0;
-                soundOcean.play().catch(e => console.log('Autoplay prevented for oceanSound'));
-            };
+// Effet 3D sur le booster
+booster.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    booster.style.cursor = 'grabbing';
+});
 
-            // Fonction pour jouer et relancer le son Chill
-            const playChill = () => {
-                soundChill.currentTime = 0;
-                soundChill.play().catch(e => console.log('Autoplay prevented for chillSound'));
-            };
+document.addEventListener('mousemove', (e) => {
+    if (!isDragging || booster.classList.contains('zoom')) return;
+    const deltaX = e.clientX - startX;
+    rotation.y = Math.max(-MAX_ROT_Y, Math.min(MAX_ROT_Y, rotation.y + deltaX * 0.2));
+    booster.style.transform = `rotateX(0deg) rotateY(${rotation.y}deg)`;
+    startX = e.clientX;
+});
 
-            // Événements pour relancer les sons lorsqu'ils se terminent
-            soundOcean.addEventListener('ended', playOcean);
-            soundChill.addEventListener('ended', playChill);
+document.addEventListener('mouseup', () => {
+    isDragging = false;
+    booster.style.cursor = 'grab';
+});
 
-            // Démarrer la lecture initiale
-            playOcean();
-            playChill();
-        });
-
-        // Effet 3D sur le booster
-        booster.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX;
-            booster.style.cursor = 'grabbing';
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging || booster.classList.contains('zoom')) return;
-            const deltaX = e.clientX - startX;
-            rotation.y = Math.max(-MAX_ROT_Y, Math.min(MAX_ROT_Y, rotation.y + deltaX * 0.2));
-            booster.style.transform = `rotateX(0deg) rotateY(${rotation.y}deg)`;
-            startX = e.clientX;
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            booster.style.cursor = 'grab';
-        });
-
-        // Clic sur un item du deck en bas
-        deck.addEventListener('click', (e) => {
+// Clic sur un item du deck en bas
+deck.addEventListener('click', (e) => {
     const entry = e.target.closest('.card-entry');
     if (!entry) return;
 
@@ -191,78 +195,41 @@ const userDescriptions = {
     modalCard.style.transform = `rotateX(0deg) rotateY(0deg)`;
 });
 
+// Gestion du drag sur la modale (optionnel)
+modalCard.addEventListener('mousedown', (e) => {
+    modalIsDragging = true;
+    modalStartX = e.clientX;
+    modalCard.style.cursor = 'grabbing';
+});
 
+document.addEventListener('mousemove', (e) => {
+    if (!modalIsDragging) return;
+    const deltaX = e.clientX - modalStartX;
+    modalRotation.y = Math.max(-MAX_ROT_Y, Math.min(MAX_ROT_Y, modalRotation.y + deltaX * 0.2));
+    modalCard.style.transform = `rotateX(0deg) rotateY(${modalRotation.y}deg)`;
+    modalStartX = e.clientX;
+});
 
+document.addEventListener('mouseup', () => {
+    if (modalIsDragging) {
+        modalIsDragging = false;
+        modalCard.style.cursor = 'grab';
+    }
+});
 
-        modalCard.addEventListener('mousedown', (e) => {
-            modalIsDragging = true;
-            modalStartX = e.clientX;
-            modalCard.style.cursor = 'grabbing';
-        });
+// Fermeture de la modale
+closeModalBtn.addEventListener('click', () => {
+    modal.classList.remove('show');
+});
 
-        document.addEventListener('mousemove', (e) => {
-            if (!modalIsDragging) return;
-            const deltaX = e.clientX - modalStartX;
-            modalRotation.y = Math.max(-MAX_ROT_Y, Math.min(MAX_ROT_Y, modalRotation.y + deltaX * 0.2));
-            modalCard.style.transform = `rotateX(0deg) rotateY(${modalRotation.y}deg)`;
-            modalStartX = e.clientX;
-        });
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        modal.classList.remove('show');
+    }
+});
 
-        document.addEventListener('mouseup', () => {
-            if (modalIsDragging) {
-                modalIsDragging = false;
-                modalCard.style.cursor = 'grab';
-            }
-        });
-
-        closeModalBtn.addEventListener('click', () => {
-            modal.classList.remove('show');
-        });
-
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('show');
-            }
-        });
-
-        btnOpen.addEventListener('click', () => {
-            // Jouer le son de clic
-            soundClick.currentTime = 0;
-            soundClick.play().catch(e => console.log('Cannot play click sound'));
-
-            if (remainingOpens <= 0) {
-                alert('Vous avez utilisé toutes vos ouvertures !');
-                return;
-            }
-
-            if (specialCards.length === 0) {
-                alert('Vous avez collecté toutes les cartes spéciales disponibles !');
-                return;
-            }
-
-            rotation.y = 0;
-            booster.style.transform = 'rotateX(0deg) rotateY(0deg)';
-
-            const selectedAnecdotes = getRandomAnecdotes(4);
-            const specialIndex = Math.floor(Math.random() * specialCards.length);
-            const selectedSpecialCard = specialCards.splice(specialIndex, 1)[0];
-
-            boosterCards = [...selectedAnecdotes, selectedSpecialCard];
-            currentCardIndex = 0;
-
-            // Masquer le bouton et le badge pendant l'ouverture
-            btnOpen.style.display = 'none';
-
-            // Réinitialiser le récapitulatif des cartes obtenues
-            boosterSummary.innerHTML = '';
-
-            setTimeout(() => {
-                booster.classList.add('zoom'); 
-                tearLine.style.display = 'block'; 
-            }, 500); 
-        });
-
-        function getRandomAnecdotes(n, usedAnecdotes = new Set()) {
+// Fonction pour générer des anecdotes aléatoires
+function getRandomAnecdotes(n, usedAnecdotes = new Set()) {
     const availableAnecdotes = anecdotes.filter(anecdote => !usedAnecdotes.has(anecdote.info));
 
     if (availableAnecdotes.length < n) {
@@ -295,264 +262,358 @@ const userDescriptions = {
     });
 }
 
+// Fonction pour vérifier la complétion du déchirement
+function checkTearCompletion() {
+    if (!isTearing) return;
 
-        // Jouer le son de déchirement lorsque l'utilisateur commence à déchirer
-        tearLine.addEventListener('mousedown', (e) => {
-            isTearing = true;
-            startX = e.clientX; 
-            tearProgress.style.width = '0'; 
-            soundPaper.currentTime = 0;
-            soundPaper.play().catch(e => console.log('Cannot play paper sound'));
-        });
+    const progressPercent = parseFloat(tearProgress.getAttribute('data-progress'));
+    console.log(`Checking Completion: ${progressPercent}%`);
 
-        tearLine.addEventListener('mousemove', (e) => {
-            if (!isTearing) return;
-            const rect = tearLine.getBoundingClientRect();
-            const progress = Math.min(
-                Math.max(0, e.clientX - rect.left),
-                rect.width
-            ); 
-            tearProgress.style.width = `${progress}px`;
-        });
+    // Ajouter une tolérance de 95% pour la complétion
+    if (progressPercent >= 95) { 
+        console.log('Tear complete!');
+        isTearing = false;
+        tearLine.style.display = 'none'; 
+        booster.classList.add('fade-out');
+        setTimeout(() => {
+            booster.style.display = 'none'; 
+            showCurrentCard();
 
-        tearLine.addEventListener('mouseup', checkTearCompletion);
-        tearLine.addEventListener('mouseleave', () => {
-            if (isTearing) {
-                isTearing = false;
-                tearProgress.style.width = '0'; 
-            }
-        });
+            // Décrémenter les ouvertures restantes **après** l'ouverture réussie
+            remainingOpens--;
+            updateCounter();
 
-        document.addEventListener('mouseup', () => {
-            if (isTearing) {
-                checkTearCompletion();
-            }
-        });
+        }, 500);
+    } else {
+        console.log('Tear incomplete, resetting progress.');
+        tearProgress.style.width = '0%';
+        tearProgress.setAttribute('data-progress', 0);
+        isTearing = false;
+    }
+}
 
-        function checkTearCompletion() {
-            if (!isTearing) return;
-            const rect = tearLine.getBoundingClientRect();
-            const progress = parseInt(tearProgress.style.width);
-            if (progress >= rect.width) {
-                isTearing = false;
-                tearLine.style.display = 'none'; 
-                booster.classList.add('fade-out');
-                setTimeout(() => {
-                    booster.style.display = 'none'; 
-                    showCurrentCard();
+// Gestion des événements de déchirement
+tearLine.addEventListener('mousedown', (e) => {
+    isTearing = true;
+    startX = e.clientX; 
+    tearProgress.style.width = '0%'; 
+    tearProgress.setAttribute('data-progress', 0);
+    soundPaper.currentTime = 0;
+    soundPaper.play().catch(e => console.log('Cannot play paper sound'));
 
-                    // Décrémenter les ouvertures restantes **après** l'ouverture réussie
-                    remainingOpens--;
-                    updateCounter();
+    // Attacher les événements mousemove et mouseup au document
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+});
 
-                }, 500);
-            } else {
-                tearProgress.style.width = '0';
-            }
-            isTearing = false;
-        }
+function onMouseMove(e) {
+    if (!isTearing) return;
+    const rect = tearLine.getBoundingClientRect();
+    const progress = Math.min(
+        Math.max(0, e.clientX - rect.left),
+        rect.width
+    ); 
+    const progressPercent = (progress / rect.width) * 100;
 
-        function showCurrentCard() {
-            const currentCard = boosterCards[currentCardIndex];
-            loadCardData(currentCard);
-            card.classList.remove('slide-left');
-            card.classList.remove('show');
-            void card.offsetWidth; 
-            requestAnimationFrame(() => {
-                card.classList.add('show');
-            });
-            card.onclick = handleCardClick;
+    tearProgress.style.width = `${progressPercent}%`;
+    tearProgress.setAttribute('data-progress', Math.floor(progressPercent));
+    console.log(`Progress: ${Math.floor(progressPercent)}% | Rect Width: ${rect.width}px | Mouse X: ${e.clientX}px | Rect Left: ${rect.left}px`);
+}
 
+function onMouseUp(e) {
+    if (!isTearing) return;
+    checkTearCompletion();
+    isTearing = false;
 
-            // Si c'est le dernier booster, préparer le récapitulatif
-            if (currentCardIndex === boosterCards.length - 1) {
-                // Stocker les cartes obtenues dans lastBoosterCards
-                lastBoosterCards = boosterCards.slice(); // Copie de boosterCards
+    // Détacher les événements pour éviter les fuites de mémoire
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+}
 
-                // Peupler le récapitulatif des cartes obtenues
-                boosterSummary.innerHTML = ''; // Effacer le récapitulatif précédent
-                lastBoosterCards.forEach(card => {
-                    const img = document.createElement('img');
-                    img.src = card.img || 'https://via.placeholder.com/50?text=Carte';
-                    img.alt = card.name || 'Carte';
-                    boosterSummary.appendChild(img);
-                });
-            }
-        }
+// Gestion des événements tactiles pour mobile
+tearLine.addEventListener('touchstart', (e) => {
+    e.preventDefault(); // Empêche le comportement par défaut
+    isTearing = true;
+    const touch = e.touches[0];
+    startX = touch.clientX; 
+    tearProgress.style.width = '0%'; 
+    tearProgress.setAttribute('data-progress', 0);
+    soundPaper.currentTime = 0;
+    soundPaper.play().catch(e => console.log('Cannot play paper sound'));
 
-        function loadCardData(currentCard) {
-            // Réinitialiser le contenu et les classes
-            cardContent.innerHTML = `
-                <img id="avatar" class="avatar" src="" alt="Avatar">
-                <h3 id="username"></h3>
-                <p id="info"></p>
-                <a id="profileLink" href="#" target="_blank">Voir le profil</a>
-            `;
-            const newAvatar = cardContent.querySelector('#avatar');
-            const newUsername = cardContent.querySelector('#username');
-            const newInfo = cardContent.querySelector('#info');
-            const newProfileLink = cardContent.querySelector('#profileLink');
+    document.addEventListener('touchmove', onTouchMove);
+    document.addEventListener('touchend', onTouchEnd);
+});
 
-            // Réinitialiser les styles et classes
-            cardContent.style.color = '#00796b';
-            cardContent.style.textShadow = 'none';
-            cardContent.classList.remove('special', 'anecdote-overlay');
-            card.classList.remove('special-card');
+function onTouchMove(e) {
+    if (!isTearing) return;
+    const touch = e.touches[0];
+    const rect = tearLine.getBoundingClientRect();
+    const progress = Math.min(
+        Math.max(0, touch.clientX - rect.left),
+        rect.width
+    ); 
+    const progressPercent = (progress / rect.width) * 100;
 
-            if (currentCard.type === 'anecdote') {
-                // Appliquer l'image de fond pour les anecdotes
-                card.style.backgroundImage = `url('img/anec.png')`;
-                card.style.backgroundColor = 'transparent';
+    tearProgress.style.width = `${progressPercent}%`;
+    tearProgress.setAttribute('data-progress', Math.floor(progressPercent));
+    console.log(`Progress: ${Math.floor(progressPercent)}% | Rect Width: ${rect.width}px | Touch X: ${touch.clientX}px | Rect Left: ${rect.left}px`);
+}
 
-                // Remplir le contenu
-                newAvatar.src = currentCard.img || 'https://via.placeholder.com/150';
-                newUsername.textContent = 'Anecdote';
-                newInfo.textContent = currentCard.info;
-                newProfileLink.href = '#';
-                newProfileLink.style.display = 'none'; // Masquer le lien
+function onTouchEnd(e) {
+    if (!isTearing) return;
+    checkTearCompletion();
+    isTearing = false;
 
-                // Ajuster le style pour la lisibilité
-                cardContent.style.color = '#ffffff';
-                cardContent.style.textShadow = '2px 2px 4px rgba(0,0,0,0.7)';
-                // Retirer la superposition de fond
-                cardContent.classList.remove('anecdote-overlay');
-            } else if (currentCard.type === 'credit') {
-                // Remplir le contenu pour les crédits (si applicable)
-                newAvatar.src = currentCard.avatar_url || 'https://via.placeholder.com/150';
-                newUsername.textContent = currentCard.login || 'Utilisateur';
-                newInfo.textContent = 'Crédits : ' + (collectedCards.length + 1);
-                newProfileLink.href = currentCard.html_url || '#';
-                newProfileLink.textContent = currentCard.html_url ? 'Voir le profil' : '';
-                newProfileLink.style.display = 'block'; // Afficher le lien si nécessaire
-            } else if (currentCard.type === 'special') {
-                // Remplir le contenu pour les cartes spéciales
-                cardContent.classList.add('special');
-                card.classList.add('special-card'); 
-                cardContent.innerHTML = `<img class="special-img" src="${currentCard.img}" alt="${currentCard.name}">`;
-                card.style.backgroundImage = ''; // Réinitialiser l'image de fond
-            }
-        }
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', onTouchEnd);
+}
 
-        function handleCardClick() {
-            // Jouer le son de flipping avant de procéder
-            soundFlipping.currentTime = 0;
-            soundFlipping.play().catch(e => console.log('Cannot play flipping sound'));
+// Fonction pour afficher la carte actuelle
+function showCurrentCard() {
+    const currentCard = boosterCards[currentCardIndex];
+    loadCardData(currentCard);
+    card.classList.remove('slide-left', 'show');
+    void card.offsetWidth; // Reflow pour réinitialiser l'animation
+    requestAnimationFrame(() => {
+        card.classList.add('show');
+    });
+    card.onclick = handleCardClick; // Attacher l'événement de clic sur la carte
 
-            // Vérifier si c'est la 4ème carte (index 3)
-            if (currentCardIndex === 3) { // index 3 correspond à la 4ème carte
-                setTimeout(() => {
-                    soundWin.currentTime = 0;
-                    soundWin.play().catch(e => console.log('Cannot play win sound'));
-                }, 1000); // Délai de 1 seconde
-            }
+    // Si c'est la dernière carte, préparer le récapitulatif
+    if (currentCardIndex === boosterCards.length - 1) {
+        // Stocker les cartes obtenues dans lastBoosterCards
+        lastBoosterCards = boosterCards.slice(); // Copie de boosterCards
 
-            card.classList.add('slide-left');
-            card.addEventListener('transitionend', onCardTransitionEnd, {once:true});
-        }
-
-        function onCardTransitionEnd() {
-            currentCardIndex++;
-            if (currentCardIndex < boosterCards.length) {
-                showCurrentCard();
-            } else {
-                card.onclick = null;
-                card.classList.remove('show'); // Masquer la carte en retirant la classe 'show'
-                const lastCard = boosterCards[boosterCards.length - 1];
-                if (lastCard.type === 'special') { 
-                    addToDeck(lastCard);
-                }
-                boosterCards = [];
-                // Afficher le récapitulatif des cartes obtenues
-                // Déjà fait dans showCurrentCard()
-
-                // Attendre 1 seconde avant d'afficher le bouton "Prochain booster"
-                setTimeout(() => {
-                    btnNext.style.display = 'block';
-                }, 1000);
-            }
-        }
-
-        function addToDeck(cardData) {
-            const entry = document.createElement('div');
-            entry.classList.add('card-entry');
-
-            // Si la carte est spéciale, ajouter la classe 'special'
-            if (cardData.type === 'special') {
-                entry.classList.add('special');
-            }
-
+        // Peupler le récapitulatif des cartes obtenues
+        boosterSummary.innerHTML = ''; // Effacer le récapitulatif précédent
+        lastBoosterCards.forEach(card => {
             const img = document.createElement('img');
-            img.src = cardData.img || cardData.avatar_url || 'https://via.placeholder.com/150?text=Carte';
-            img.alt = cardData.name || cardData.login || 'Carte';
+            img.src = card.img || 'https://via.placeholder.com/50?text=Carte';
+            img.alt = card.name || 'Carte';
+            boosterSummary.appendChild(img);
+        });
+    }
+}
 
-            const link = document.createElement('a');
-            link.href = cardData.html_url || '#';
-            link.target = '_blank';
+// Fonction pour charger les données de la carte actuelle
+function loadCardData(currentCard) {
+    // Réinitialiser le contenu et les classes
+    cardContent.innerHTML = `
+        <img id="avatar" class="avatar" src="" alt="Avatar">
+        <h3 id="username"></h3>
+        <p id="info"></p>
+        <a id="profileLink" href="#" target="_blank">Voir le profil</a>
+    `;
+    const newAvatar = cardContent.querySelector('#avatar');
+    const newUsername = cardContent.querySelector('#username');
+    const newInfo = cardContent.querySelector('#info');
+    const newProfileLink = cardContent.querySelector('#profileLink');
 
-            if (cardData.type === 'special') {
-                link.textContent = cardData.name || 'Special';
-            } else if (cardData.type === 'anecdote') {
-                link.textContent = 'Anecdote'; // Nom générique pour les anecdotes
-            } else {
-                link.textContent = 'Carte'; // Autre type de carte
-            }
+    // Réinitialiser les styles et classes
+    cardContent.style.color = '#00796b';
+    cardContent.style.textShadow = 'none';
+    cardContent.classList.remove('special', 'anecdote-overlay');
+    card.classList.remove('special-card');
 
-            entry.appendChild(img);
-            entry.appendChild(link);
-            deck.appendChild(entry);
+    if (currentCard.type === 'anecdote') {
+        // Appliquer l'image de fond pour les anecdotes
+        card.style.backgroundImage = `url('img/anec.png')`;
+        card.style.backgroundColor = 'transparent';
+
+        // Remplir le contenu
+        newAvatar.src = currentCard.img || 'https://via.placeholder.com/150';
+        newUsername.textContent = 'Anecdote';
+        newInfo.textContent = currentCard.info;
+        newProfileLink.href = '#';
+        newProfileLink.style.display = 'none'; // Masquer le lien
+
+        // Ajuster le style pour la lisibilité
+        cardContent.style.color = '#ffffff';
+        cardContent.style.textShadow = '2px 2px 4px rgba(0,0,0,0.7)';
+    } else if (currentCard.type === 'credit') {
+        // Remplir le contenu pour les crédits (si applicable)
+        newAvatar.src = currentCard.avatar_url || 'https://via.placeholder.com/150';
+        newUsername.textContent = currentCard.login || 'Utilisateur';
+        newInfo.textContent = 'Crédits : ' + (collectedCards.length + 1);
+        newProfileLink.href = currentCard.html_url || '#';
+        newProfileLink.textContent = currentCard.html_url ? 'Voir le profil' : '';
+        newProfileLink.style.display = 'block'; // Afficher le lien si nécessaire
+    } else if (currentCard.type === 'special') {
+        // Remplir le contenu pour les cartes spéciales
+        cardContent.classList.add('special');
+        card.classList.add('special-card'); 
+        cardContent.innerHTML = `<img class="special-img" src="${currentCard.img}" alt="${currentCard.name}">`;
+        card.style.backgroundImage = ''; // Réinitialiser l'image de fond
+    }
+}
+
+// Fonction pour gérer le clic sur la carte
+function handleCardClick() {
+    // Jouer le son de flipping avant de procéder
+    soundFlipping.currentTime = 0;
+    soundFlipping.play().catch(e => console.log('Cannot play flipping sound'));
+
+    // Vérifier si c'est la dernière carte
+    if (currentCardIndex === boosterCards.length -1) { // dernière carte
+        setTimeout(() => {
+            soundWin.currentTime = 0;
+            soundWin.play().catch(e => console.log('Cannot play win sound'));
+        }, 1000); // Délai de 1 seconde
+    }
+
+    card.classList.add('slide-left');
+    card.addEventListener('transitionend', onCardTransitionEnd, {once:true});
+}
+
+// Fonction exécutée à la fin de la transition de la carte
+function onCardTransitionEnd() {
+    currentCardIndex++;
+    if (currentCardIndex < boosterCards.length) {
+        showCurrentCard();
+    } else {
+        card.onclick = null;
+        card.classList.remove('show'); // Masquer la carte en retirant la classe 'show'
+        const lastCard = boosterCards[boosterCards.length - 1];
+        if (lastCard.type === 'special') { 
+            addToDeck(lastCard);
         }
+        boosterCards = [];
+        // Afficher le récapitulatif des cartes obtenues
+        // Déjà fait dans showCurrentCard()
 
-        btnNext.addEventListener('click', () => {
-            // Jouer le son de clic
-            soundClick.currentTime = 0;
-            soundClick.play().catch(e => console.log('Cannot play click sound'));
-
-            card.classList.remove('show', 'slide-left', 'special-card');
-            booster.classList.remove('zoom', 'fade-out');
+        // Réinitialiser l'affichage du booster pour permettre une nouvelle ouverture
+        setTimeout(() => {
             booster.style.display = 'block';
-            booster.style.opacity = '1';
-            rotation = { x: 0, y: 0 };
-            booster.style.transform = 'rotateX(0deg) rotateY(0deg)';
-            tearProgress.style.width = '0';
-            btnNext.style.display = 'none';
+            booster.classList.remove('fade-out');
+            booster.classList.remove('zoom');
+            tearLine.style.display = 'none';
+            tearProgress.style.width = '0%';
 
-            // Réinitialiser le récapitulatif des cartes obtenues
+            // Réinitialiser boosterSummary pour éviter l'accumulation des cartes précédentes
             boosterSummary.innerHTML = '';
 
+            // Montrer à nouveau le bouton "Ouvrir le booster" si des ouvertures restent
             if (remainingOpens > 0 && specialCards.length > 0) {
                 btnOpen.style.display = 'block';
-            } else {
-                btnOpen.style.display = 'none';
-                if (remainingOpens <=0) {
-                    alert('Vous avez utilisé toutes vos ouvertures !');
-                }
-                if (specialCards.length ===0) {
-                    alert('Vous avez collecté toutes les cartes spéciales disponibles !');
-                }
             }
+        }, 1000);
+    }
+}
 
-            // Réinitialiser le contenu de la carte
-            cardContent.innerHTML = `
-                <img id="avatar" class="avatar" src="" alt="Avatar">
-                <h3 id="username"></h3>
-                <p id="info"></p>
-                <a id="profileLink" href="#" target="_blank">Voir le profil</a>
-            `;
-            cardContent.classList.remove('special');
-            // Réinitialiser les styles de la carte
-            card.style.backgroundImage = '';
-            card.style.backgroundColor = '#ffffff';
-        });
+// Fonction pour ajouter une carte au deck
+function addToDeck(cardData) {
+    const entry = document.createElement('div');
+    entry.classList.add('card-entry');
 
-        // Fonction pour mettre à jour le compteur de tirages
-        function updateCounter() {
-            console.log(`Remaining Opens: ${remainingOpens}`);
-            console.log(`Special Cards Remaining: ${specialCards.length}`);
-            openCounter.textContent = remainingOpens;
-            if (remainingOpens <= 0) {
-                btnOpen.disabled = true;
-                btnOpen.style.opacity = '0.6';
-                btnOpen.style.cursor = 'not-allowed';
-                alert('Vous avez utilisé toutes vos ouvertures !');
-            }
-        }
+    // Si la carte est spéciale, ajouter la classe 'special'
+    if (cardData.type === 'special') {
+        entry.classList.add('special');
+    }
+
+    const img = document.createElement('img');
+    img.src = cardData.img || cardData.avatar_url || 'https://via.placeholder.com/150?text=Carte';
+    img.alt = cardData.name || cardData.login || 'Carte';
+
+    const link = document.createElement('a');
+    link.href = cardData.html_url || '#';
+    link.target = '_blank';
+
+    if (cardData.type === 'special') {
+        link.textContent = cardData.name || 'Special';
+    } else if (cardData.type === 'anecdote') {
+        link.textContent = 'Anecdote'; // Nom générique pour les anecdotes
+    } else {
+        link.textContent = 'Carte'; // Autre type de carte
+    }
+
+    entry.appendChild(img);
+    entry.appendChild(link);
+    deck.appendChild(entry);
+}
+
+// Bouton "Ouvrir le booster"
+btnOpen.addEventListener('click', () => {
+    // Jouer le son de clic
+    soundClick.currentTime = 0;
+    soundClick.play().catch(e => console.log('Cannot play click sound'));
+
+    // Retirer les alertes ici
+    /*
+    if (remainingOpens <= 0) {
+        alert('Vous avez utilisé toutes vos ouvertures !');
+        return;
+    }
+
+    if (specialCards.length === 0) {
+        alert('Vous avez collecté toutes les cartes spéciales disponibles !');
+        return;
+    }
+    */
+
+    // Vérifier si toutes les ouvertures et cartes spéciales sont déjà utilisées
+    if (remainingOpens <= 0 && specialCards.length === 0) {
+        // Cette condition est déjà gérée dans updateCounter()
+        return;
+    }
+
+    rotation.y = 0;
+    booster.style.transform = 'rotateX(0deg) rotateY(0deg)';
+
+    const selectedAnecdotes = getRandomAnecdotes(4);
+    const specialIndex = Math.floor(Math.random() * specialCards.length);
+    const selectedSpecialCard = specialCards.splice(specialIndex, 1)[0];
+
+    boosterCards = [...selectedAnecdotes, selectedSpecialCard];
+    currentCardIndex = 0;
+
+    // Masquer le bouton et le badge pendant l'ouverture
+    btnOpen.style.display = 'none';
+
+    // Réinitialiser le récapitulatif des cartes obtenues
+    boosterSummary.innerHTML = '';
+
+    setTimeout(() => {
+        booster.classList.add('zoom'); 
+        tearLine.style.display = 'block'; 
+    }, 500); 
+});
+
+// Fonction pour mettre à jour le compteur de tirages
+function updateCounter() {
+    console.log(`Remaining Opens: ${remainingOpens}`);
+    console.log(`Special Cards Remaining: ${specialCards.length}`);
+    openCounter.textContent = remainingOpens;
+
+    // Vérifier que toutes les ouvertures sont utilisées ET toutes les cartes spéciales sont collectées
+    if (remainingOpens <= 0 && specialCards.length === 0) {
+        btnOpen.disabled = true;
+        btnOpen.style.opacity = '0.6';
+        btnOpen.style.cursor = 'not-allowed';
+        // Afficher la modale de complétion
+        showCompletionModal();
+    }
+}
+
+// --- Gestion de la Modale Personnalisée ---
+
+// Sélection des éléments de la modale de complétion
+const completionModal = document.getElementById('completionModal');
+const closeCompletionModal = document.getElementById('closeCompletionModal');
+
+// Fonction pour afficher la modale de complétion
+function showCompletionModal() {
+    completionModal.style.display = 'flex';
+}
+
+// Gestion de la fermeture de la modale de complétion
+closeCompletionModal.addEventListener('click', () => {
+    completionModal.style.display = 'none';
+});
+
+// Fermer la modale en cliquant en dehors du contenu
+completionModal.addEventListener('click', (e) => {
+    if (e.target === completionModal) {
+        completionModal.style.display = 'none';
+    }
+});

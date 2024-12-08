@@ -1,5 +1,16 @@
+/* styles.css */
+
+/* Réinitialisation des marges et paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Style du body */
 body {
     display: flex;
+    flex-direction: column;
     height: 100vh;
     margin: 0;
     font-family: Arial, sans-serif;
@@ -8,9 +19,10 @@ body {
     position: relative; 
 }
 
+/* Style des textes blancs avec ombre */
 .card-content .text-white {
-color: #ffffff !important;
-text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    color: #ffffff !important;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
 }
 
 /* Animation de clignotement doux */
@@ -32,6 +44,7 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     animation: blinker 3s linear infinite; /* Ajout de l'animation de clignotement */
 }
 
+/* Conteneur des bulles */
 .bubble-container {
     position: absolute;
     bottom: 0;
@@ -66,7 +79,7 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     }
 }
 
-/* Liste horizontale en bas */
+/* Liste horizontale en bas (Deck) */
 .deck {
     position: absolute;
     bottom: 10px;
@@ -75,13 +88,15 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     flex-direction: row;
     gap: 15px; /* Réduit de 20px à 15px */
     align-items: center;
-    padding: 5px;
+    padding: 10px; /* Augmenté de 5px à 10px */
     border-radius: 8px;
     overflow-x: auto;
     max-width: 85%; /* Réduit de 90% à 85% */
     z-index: 9999;
+    background-color: rgba(255, 255, 255, 0.1); /* Fond léger pour distinguer */
 }
 
+/* Entrée de carte dans le deck */
 .card-entry {
     display: flex;
     flex-direction: column;
@@ -92,12 +107,20 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     padding: 0;
     margin: 0;
     cursor: pointer;
-    width: 220px; /* Augmenté de 180px à 220px */
+    width: 200px; /* Réduit de 220px à 200px */
+    height: auto; /* Ajusté pour s'adapter au contenu */
+    border-radius: 5px; /* Ajouté pour des coins légèrement arrondis */
+    transition: transform 0.2s ease, background-color 0.3s;
+}
+
+.card-entry:hover {
+    transform: scale(1.05); /* Effet au survol légèrement moins intense */
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 .card-entry img {
     width: 100%;
-    max-height: 200px; /* Réduit de 240px à 200px */
+    max-height: 180px; /* Réduit de 200px à 180px */
     object-fit: contain;
     border-radius: 8px;
     margin-bottom: 3px;
@@ -112,13 +135,11 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     font-size: 0.8rem; /* Réinitialisé à 0.8rem */
 }
 
-/* Optionnel : Styles pour les cartes spéciales dans le deck */
-.card-entry.special {
-    border: 2px solid #004d4000;
-    padding: 5px;
-    border-radius: 10px;
+.card-entry.special a {
+    color: #ff6347; /* Couleur différente pour les cartes spéciales */
 }
 
+/* Main content */
 .main-content {
     flex: 1;
     display: flex;
@@ -128,6 +149,7 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     position: relative;
 }
 
+/* Scène de la carte */
 .scene {
     width: 280px; 
     height: 467px; 
@@ -136,6 +158,7 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     position: relative;
 }
 
+/* Booster et carte */
 .booster, .card {
     width: 100%;
     height: 100%;
@@ -162,18 +185,13 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     opacity: 0;
 }
 
-/* Suppression du contenu textuel du booster */
-/* .front-content {
-    display: none;
-} */
-
+/* Carte */
 .card {
     display: none;
     transform: translateX(0);
     transition: transform 0.5s ease;
     background-color: #ffffff; 
     cursor: pointer; 
-    /* Suppression des bordures */
     border: none;
     box-shadow: none; /* Retirer si vous ne voulez pas de shadow autour de la carte */
     width: 280px; /* Assurer la même largeur que la scène */
@@ -195,6 +213,7 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     box-shadow: none; 
 }
 
+/* Contenu de la carte */
 .card-content {
     position: absolute;
     top: 10%;
@@ -247,37 +266,25 @@ text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
     border: none; /* Ajouté pour supprimer toute bordure */
 }
 
-/* Supprimer la classe .card.opened pour maintenir la taille uniforme */
-/* .card.opened {
-    width: 366px; 
-    height: 523px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000; 
-    transition: width 0.5s ease, height 0.5s ease, transform 0.5s ease;
-} */
-
 .card-content.anecdote-overlay {
-background: rgba(0, 0, 0, 0.6); /* Superposition sombre pour lisibilité */
-padding: 10px;
-border-radius: 10px;
-text-align: center;
-color: white; /* Texte en blanc */
-text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); /* Améliore la lisibilité */
+    background: rgba(0, 0, 0, 0.6); /* Superposition sombre pour lisibilité */
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    color: white; /* Texte en blanc */
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); /* Améliore la lisibilité */
 }
 
 .card-content img.avatar {
-object-fit: cover; /* Empêche l'étirement des images */
-width: 100%; /* L'image prend toute la largeur */
-height: auto; /* Respecte les proportions */
-max-height: 200px; /* Limite la hauteur pour éviter les débordements */
-border-radius: 10px; /* Coins arrondis */
-margin-bottom: 10px; /* Espace entre l'image et le texte */
+    object-fit: cover; /* Empêche l'étirement des images */
+    width: 100%; /* L'image prend toute la largeur */
+    height: auto; /* Respecte les proportions */
+    max-height: 200px; /* Limite la hauteur pour éviter les débordements */
+    border-radius: 10px; /* Coins arrondis */
+    margin-bottom: 10px; /* Espace entre l'image et le texte */
 }
 
-
-/* Bouton d'ouverture */
+/* Bouton "Ouvrir le booster" */
 .btn-open {
     position: relative; /* Nécessaire pour positionner le badge */
     background-color: #00796b; 
@@ -290,7 +297,7 @@ margin-bottom: 10px; /* Espace entre l'image et le texte */
     cursor: pointer;
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     transition: background-color 0.3s ease, transform 0.2s;
-    margin-top: 20px;
+    margin-top: 10px; /* Réduit de 20px à 10px */
     animation: blinker 3s linear infinite; /* Ajout de l'animation de clignotement */
 }
 
@@ -302,6 +309,11 @@ margin-bottom: 10px; /* Espace entre l'image et le texte */
 .btn-open:active {
     background-color: #00332e; 
     transform: scale(0.95);
+}
+
+.btn-open:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 /* Badge pour les tirages restants */
@@ -334,8 +346,8 @@ margin-bottom: 10px; /* Espace entre l'image et le texte */
     cursor: pointer;
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     transition: background-color 0.3s ease, transform 0.2s;
-    margin-top: 20px;
-    display: none;
+    margin-top: 10px; /* Réduit de 20px à 10px */
+    display: none; /* Conserver l'état initial comme caché */
 }
 
 .btn-next:hover {
@@ -357,6 +369,8 @@ margin-bottom: 10px; /* Espace entre l'image et le texte */
     overflow-x: auto;
     max-width: 100%;
     padding: 5px;
+    background-color: rgba(255, 255, 255, 0.1); /* Fond léger pour distinguer */
+    border-radius: 8px;
 }
 
 .booster-summary img {
@@ -367,11 +381,13 @@ margin-bottom: 10px; /* Espace entre l'image et le texte */
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
+/* Effet de zoom */
 .zoom {
     transform: rotateX(0deg) rotateY(0deg);
     transition: transform 0.5s ease;
 }
 
+/* Ligne de déchirement */
 .tear-line {
     position: absolute;
     top: 5%;
@@ -415,6 +431,7 @@ margin-bottom: 10px; /* Espace entre l'image et le texte */
     background-color: rgba(255, 0, 0, 0.5);
 }
 
+/* Modale principale */
 .modal {
     position: fixed;
     top: 0;
@@ -487,45 +504,86 @@ margin-bottom: 10px; /* Espace entre l'image et le texte */
 }
 
 .close-modal {
-position: absolute;
-left: 50%;
-bottom: 5%;
-transform: translateX(-50%);
-background: #00796b;
-color: #fff;
-padding: 8px 16px;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-transition: background-color 0.3s ease, transform 0.2s; /* Animation stable */
+    position: absolute;
+    left: 50%;
+    bottom: 5%;
+    transform: translateX(-50%);
+    background: #00796b;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s; /* Animation stable */
 }
 
-
 .close-modal:hover {
-background-color: #004d40;
+    background-color: #004d40;
 }
 
 .close-modal:active {
-background-color: #00332e;
+    background-color: #00332e;
 }
 
 /* Animation de brillance pour la 5ème carte */
 @keyframes shineEffect {
-0% {
-box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-50% {
-box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-}
-100% {
-box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
+    0% {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
 }
 
 .card.shine {
-animation: shineEffect 1.5s ease-in-out infinite;
+    animation: shineEffect 1.5s ease-in-out infinite;
 }
 
+/* Modale pour le graphique */
+#graphModal .modal-content {
+    width: 80%;
+    max-width: 600px;
+    height: auto;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+#userGraph {
+    margin: 20px 0;
+}
+
+/* Bouton "Afficher le graphique" */
+.btn-show-graph {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background-color: #00796b;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s;
+    z-index: 1000; /* Assure que le bouton est au-dessus des autres éléments */
+}
+
+.btn-show-graph:hover {
+    background-color: #004d40;
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
 @media (max-width: 800px) {
     .modalNameDesc {
         left: 5%;
@@ -553,46 +611,17 @@ animation: shineEffect 1.5s ease-in-out infinite;
         width: 40px;
         height: 40px;
     }
-}
 
-/* Bouton "Afficher le graphique" */
-.btn-show-graph {
-position: absolute;
-right: 20px;
-bottom: 20px;
-background-color: #00796b;
-color: #fff;
-font-size: 1rem;
-font-weight: bold;
-padding: 12px 24px;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-transition: background-color 0.3s ease, transform 0.2s;
-z-index: 1000; /* Assure que le bouton est au-dessus des autres éléments */
-}
+    /* Ajustement des cartes dans le deck pour mobile */
+    .card-entry {
+        width: 180px; /* Réduit de 200px à 180px */
+    }
 
-.btn-show-graph:hover {
-background-color: #004d40;
-transform: scale(1.05);
-}
+    .card-entry img {
+        max-height: 160px; /* Réduit de 180px à 160px */
+    }
 
-
-/* Modale pour le graphique */
-#graphModal .modal-content {
-width: 80%;
-max-width: 600px;
-height: auto;
-background-color: #fff;
-border-radius: 8px;
-padding: 20px;
-display: flex;
-flex-direction: column;
-align-items: center;
-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-#userGraph {
-margin: 20px 0;
+    .booster-summary {
+        max-width: 280px; /* Ajusté pour mobile */
+    }
 }
